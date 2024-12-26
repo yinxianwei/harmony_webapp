@@ -47,6 +47,31 @@
           }
         ],
       }
+    ],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      },
+      {
+        "name": "ohos.permission.APPROXIMATELY_LOCATION",
+        "reason": "$string:permission_location",
+        "usedScene": {
+          "abilities": [
+            "AppAbility"
+          ],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.LOCATION",
+        "reason": "$string:permission_location",
+        "usedScene": {
+          "abilities": [
+            "AppAbility"
+          ],
+          "when": "inuse"
+        }
+      }
     ]
   }
 }

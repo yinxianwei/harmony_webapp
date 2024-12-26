@@ -11,6 +11,10 @@
     {
       "name": "AppAbility_label",
       "value": "label"
+    },
+    {
+      "name": "permission_location",
+      "value": "用于签到打卡"
     }
   ]
 }
