@@ -1,5 +1,6 @@
 import { webview } from '@kit.ArkWeb'
 import { Plugin } from '../plugins/Plugin';
+import { common } from '@kit.AbilityKit';
 
 @Entry
 @Component
@@ -7,11 +8,10 @@ struct Index {
   controller: webview.WebviewController = new webview.WebviewController();
   baseUrl: string = 'https://www.example.com/';
   responseWeb: WebResourceResponse = new WebResourceResponse();
-  @State plugin: Plugin = new Plugin()
+  @State plugin: Plugin = new Plugin(getContext(this) as common.UIAbilityContext)
 
   aboutToAppear(): void {
     this.plugin.webview = this.controller;
-    this.plugin.context = getContext(this);
   }
 
   build() {

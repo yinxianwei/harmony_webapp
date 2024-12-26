@@ -1,10 +1,14 @@
-import { abilityAccessCtrl, bundleManager, Permissions } from '@kit.AbilityKit';
+import { abilityAccessCtrl, bundleManager, common, Permissions } from '@kit.AbilityKit';
 import { geoLocationManager } from '@kit.LocationKit';
+import { CallBackMsg, JPushInterface } from '@jg/push';
+import { JPushCallBackMsg } from './JPushCallBackMsg';
+import { notificationManager } from '@kit.NotificationKit';
 
 export class Plugin {
+  public context: common.UIAbilityContext;
   public webview?: WebviewController;
-  public context?: Context;
   private _manager?: abilityAccessCtrl.AtManager
+  eventListeners: Map<string, Array<Function>>;
 
   get manager() {
     if (!this._manager) {
@@ -13,7 +17,37 @@ export class Plugin {
     return this._manager;
   }
 
-  constructor() {
+  constructor(context: common.UIAbilityContext) {
+    this.context = context;
+    this.eventListeners = new Map()
+  }
+
+  addListener(key: string, callback: Function) {
+    if (this.eventListeners[key]) {
+      this.eventListeners[key].push(callback)
+    } else {
+      this.eventListeners.set(key, [callback])
+    }
+  }
+
+  removeListener(key: string, callback: Function) {
+    let listeners = this.eventListeners.get(key);
+    if (listeners) {
+      this.eventListeners.set(key, listeners.filter(call => call != callback));
+    }
+  }
+
+  notifyListeners(key: string, data: object) {
+    let listenersForEvent = this.eventListeners.get(key);
+    if (listenersForEvent) {
+      listenersForEvent.forEach(call => {
+        call(data)
+      })
+    }
+  }
+
+  removeAllListeners() {
+    this.eventListeners.clear()
   }
 
   getAccessTokenID() {
@@ -78,9 +112,40 @@ export class Plugin {
     })
   }
 
+  JPushInit(options: object): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      let isEnabled = notificationManager.isNotificationEnabledSync();
+      if (!isEnabled) {
+        try {
+          await notificationManager.requestEnableNotification(this.context)
+        } catch (e) {
+          return reject(e)
+        }
+      }
+      let callback = new JPushCallBackMsg(this.context.getApplicationContext(), this);
+      JPushInterface.setCallBackMsg(callback)
+      JPushInterface.setAppKey(options['appKey']);
+      JPushInterface.setChannel(options['channel']);
+      JPushInterface.init(this.context)
+      resolve(true)
+    })
+  }
+
+  JPushGetRegistrationId(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let rid = JPushInterface.getRegistrationId()
+      resolve(rid)
+    })
+  }
+
   static methodList(): Array<string> {
     return [
-      'getCurrentPosition'
+      'getCurrentPosition',
+      'JPushInit',
+      'JPushGetRegistrationId',
+      'addListener',
+      'removeListener',
+      'removeAllListeners',
     ]
   }
 }

@@ -54,7 +54,7 @@
       },
       {
         "name": "ohos.permission.APPROXIMATELY_LOCATION",
-        "reason": "$string:permission_location",
+        "reason": "$string:permission_LOCATION",
         "usedScene": {
           "abilities": [
             "AppAbility"
@@ -64,12 +64,22 @@
       },
       {
         "name": "ohos.permission.LOCATION",
-        "reason": "$string:permission_location",
+        "reason": "$string:permission_LOCATION",
         "usedScene": {
           "abilities": [
             "AppAbility"
           ],
           "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.APP_TRACKING_CONSENT",
+        "reason": "$string:permission_APP_TRACKING_CONSENT",
+        "usedScene": {
+          "abilities": [
+            "AppAbility"
+          ],
+          "when": "always"
         }
       }
     ]

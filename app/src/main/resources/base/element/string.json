@@ -13,8 +13,12 @@
       "value": "label"
     },
     {
-      "name": "permission_location",
+      "name": "permission_LOCATION",
       "value": "用于签到打卡"
+    },
+    {
+      "name": "permission_APP_TRACKING_CONSENT",
+      "value": "用于消息提醒"
     }
   ]
 }
