@@ -3,6 +3,8 @@ import { geoLocationManager } from '@kit.LocationKit';
 import { CallBackMsg, JPushInterface } from '@jg/push';
 import { JPushCallBackMsg } from './JPushCallBackMsg';
 import { notificationManager } from '@kit.NotificationKit';
+import { request } from './request'
+import { TabBarOptions } from '@kit.ArkUI';
 
 export class Plugin {
   public context: common.UIAbilityContext;
@@ -138,6 +140,10 @@ export class Plugin {
     })
   }
 
+  request(url: string, options: object) {
+    return request(url, options);
+  }
+
   static methodList(): Array<string> {
     return [
       'getCurrentPosition',
@@ -146,6 +152,7 @@ export class Plugin {
       'addListener',
       'removeListener',
       'removeAllListeners',
+      'request'
     ]
   }
 }

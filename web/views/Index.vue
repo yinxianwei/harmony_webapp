@@ -7,10 +7,13 @@
             <van-cell title="初始化" is-link @click="JPushInit" />
             <van-cell title="获取registrationid" is-link @click="JPushGetRegistrationId" />
         </van-cell-group>
+        <van-cell-group inset title="http">
+            <van-cell title="get请求" is-link @click="sendGet" />
+        </van-cell-group>
     </div>
 </template>
 <script setup>
-import { showDialog } from 'vant';
+import { showDialog, showLoadingToast, closeToast } from 'vant';
 function getCurrentPosition() {
     window.harmony.getCurrentPosition(
         (res) => {
@@ -26,7 +29,7 @@ function getCurrentPosition() {
 }
 
 function JPushInit() {
-    window.harmony.JPushInit({ appKey: '', channel: 'default', isProduction: true }).then(
+    window.harmony.JPushInit({ appKey: '16860ec228e1f10d52c11862', channel: 'default', isProduction: true }).then(
         (res) => {
             showDialog({ message: JSON.stringify(res) });
         },
@@ -41,8 +44,18 @@ function JPushGetRegistrationId() {
         (err) => {}
     );
 }
+function sendGet() {
+    showLoadingToast({ message: '加载中...', forbidClick: true, duration: 0 });
+    window.harmony.request('https://www.ip.cn/api/index?ip&type=0', {}).then(
+        (res) => {
+            closeToast();
+            showDialog({ message: res.result });
+        },
+        (err) => {}
+    );
+}
 
-window.harmony.addListener('JPushOpenNotification', function (res) {
+window.harmony?.addListener('JPushOpenNotification', function (res) {
     showDialog({ message: JSON.stringify(res) });
 });
 </script>

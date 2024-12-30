@@ -22,6 +22,7 @@ struct Index {
       })
         .fileAccess(true)
         .mixedMode(MixedMode.All)
+        .domStorageAccess(true)
         .javaScriptProxy({
           object: this.plugin,
           name: 'harmony',
