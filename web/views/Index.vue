@@ -9,6 +9,7 @@
         </van-cell-group>
         <van-cell-group inset title="http">
             <van-cell title="get请求" is-link @click="sendGet" />
+            <van-cell title="post请求" is-link @click="sendPost" />
         </van-cell-group>
     </div>
 </template>
@@ -46,13 +47,35 @@ function JPushGetRegistrationId() {
 }
 function sendGet() {
     showLoadingToast({ message: '加载中...', forbidClick: true, duration: 0 });
-    window.harmony.request('https://www.ip.cn/api/index?ip&type=0', {}).then(
+    window.harmony.request('https://reqres.in/api/users/2', {}).then(
         (res) => {
             closeToast();
             showDialog({ message: res.result });
         },
         (err) => {}
     );
+}
+
+function sendPost() {
+    showLoadingToast({ message: '加载中...', forbidClick: true, duration: 0 });
+    window.harmony
+        .request('https://reqres.in/api/users', {
+            method: 'POST',
+            header: {
+                'content-type': 'application/json',
+            },
+            extraData: {
+                name: 'morpheus',
+                job: 'leader',
+            },
+        })
+        .then(
+            (res) => {
+                closeToast();
+                showDialog({ message: res.result });
+            },
+            (err) => {}
+        );
 }
 
 window.harmony?.addListener('JPushOpenNotification', function (res) {
