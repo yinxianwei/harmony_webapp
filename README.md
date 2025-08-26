@@ -16,4 +16,4 @@ cd web && yarn install && yarn dev
 cd web && yarn install && yarn build
 
 
-<img src="https://imgse.com/i/pVyspIs" width="400px">
+<img src="https://s21.ax1x.com/2025/08/26/pVyspIs.jpg" width="400px">
