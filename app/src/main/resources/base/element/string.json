@@ -10,15 +10,11 @@
     },
     {
       "name": "AppAbility_label",
-      "value": "label"
+      "value": "App "
     },
     {
-      "name": "permission_LOCATION",
-      "value": "用于签到打卡"
-    },
-    {
-      "name": "permission_APP_TRACKING_CONSENT",
-      "value": "用于消息提醒"
+      "name": "reason_permission_LOCATION",
+      "value": "为了签到打卡，需要开启定位权限"
     }
   ]
 }

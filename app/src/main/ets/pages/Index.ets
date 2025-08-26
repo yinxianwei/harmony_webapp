@@ -1,49 +1,103 @@
 import { webview } from '@kit.ArkWeb'
-import { Plugin } from '../plugins/Plugin';
-import { common } from '@kit.AbilityKit';
+import { BusinessError } from '@kit.BasicServicesKit';
+import { utils } from '../plugins/utils';
+import bridge from '../plugins';
+import { updater } from '../plugins/updater';
+import { VERSION_NAME, DEBUG } from 'BuildProfile';
 
 @Entry
 @Component
 struct Index {
-  controller: webview.WebviewController = new webview.WebviewController();
-  baseUrl: string = 'https://www.example.com/';
-  responseWeb: WebResourceResponse = new WebResourceResponse();
-  @State plugin: Plugin = new Plugin(getContext(this) as common.UIAbilityContext)
+  controller: webview.WebviewController = utils.getWebview()!
+  targetDir: string = utils.getContext()!.filesDir + '/' + VERSION_NAME
 
   aboutToAppear(): void {
-    this.plugin.webview = this.controller;
+    webview.WebviewController.setWebDebuggingAccess(DEBUG);
+    let srcDir = utils.getContext()!.resourceDir + '/dist/';
+    utils.copyFiles(srcDir, this.targetDir, DEBUG)
   }
 
   build() {
     Column() {
       Web({
-        src: this.baseUrl,
-        controller: this.controller,
+        src: "",
+        controller: this.controller
       })
+        .onControllerAttached(async () => {
+          try {
+            let version: string = await updater['getVersion']();
+            if (utils.compareVersion(VERSION_NAME, version) == -1) {
+              this.targetDir = utils.getContext()!.filesDir + '/' + version + '/'
+            }
+            utils.loadUrl(this.controller, this.targetDir)
+          } catch (error) {
+            console.error(`ErrorCode: ${(error as BusinessError).code},  Message: ${(error as BusinessError).message}`);
+          }
+        })
+        .javaScriptProxy({
+          name: 'harmony',
+          object: bridge,
+          controller: this.controller,
+          methodList: ['call'],
+          asyncMethodList: []
+        })
+        .javaScriptAccess(true)
         .fileAccess(true)
         .mixedMode(MixedMode.All)
         .domStorageAccess(true)
-        .javaScriptProxy({
-          object: this.plugin,
-          name: 'harmony',
-          methodList: Plugin.methodList(),
-          controller: this.controller,
-        })
-        .onInterceptRequest((event) => {
-          const url = event.request.getRequestUrl();
-          if (url.indexOf(this.baseUrl) == 0) {
-            let filename = url.replace(this.baseUrl, '') || 'index.html';
-            this.responseWeb.setResponseData($rawfile(filename));
-            this.responseWeb.setResponseCode(200);
-            if (filename.endsWith('.html')) {
-              this.responseWeb.setResponseMimeType('text/html');
-            } else if (filename.endsWith('.css')) {
-              this.responseWeb.setResponseMimeType('text/css');
-            } else if (filename.endsWith('.js')) {
-              this.responseWeb.setResponseMimeType('application/javascript');
+        .onAlert(event => {
+          this.getUIContext().showAlertDialog({
+            title: '温馨提示',
+            message: event.message,
+            primaryButton: {
+              value: '取消',
+              action: () => {
+                event.result.handleCancel()
+              }
+            },
+            secondaryButton: {
+              value: '确定',
+              action: () => {
+                event.result.handleConfirm()
+              }
+            },
+            cancel: () => {
+              event.result.handleCancel()
             }
+          })
+          return true
+        })
+        .geolocationAccess(true)
+        .onGeolocationShow(async (event) => {
+          try {
+            await utils.requestPermissions(['ohos.permission.APPROXIMATELY_LOCATION', 'ohos.permission.LOCATION'])
+          } catch (e) {
           }
-          return this.responseWeb;
+          this.getUIContext().showAlertDialog({
+            title: '位置权限请求',
+            message: '是否允许获取位置信息',
+            primaryButton: {
+              value: '取消',
+              action: () => {
+                if (event) {
+                  event.geolocation.invoke(event.origin, false, false);
+                }
+              }
+            },
+            secondaryButton: {
+              value: '确定',
+              action: () => {
+                if (event) {
+                  event.geolocation.invoke(event.origin, true, true);
+                }
+              }
+            },
+            cancel: () => {
+              if (event) {
+                event.geolocation.invoke(event.origin, false, false);
+              }
+            }
+          })
         })
     }
   }
@@ -55,16 +109,5 @@ struct Index {
     } else {
       return false;
     }
-  }
-}
-
-
-class Abc {
-  t1() {
-    console.log('1');
-  }
-
-  t2() {
-    console.log('2')
   }
 }

@@ -1,22 +1,19 @@
-## 环境
+鸿蒙WebApp模板
 
-Node 18+
+# 环境
 
-DevEco Studio 5.0.1
-
+node 20+
 yarn
-
-## 初始化
-
-```bash
-yarn install
-yarn build
-```
+DevEco Studio 5
+vite5 + vue3 + vant4
 
 
-## 启动
 
-使用DevEco Studio打开启动
+# web开发
+cd web && yarn install && yarn dev
+
+# web打包
+cd web && yarn install && yarn build
 
 
-<img src="https://s21.ax1x.com/2024/12/25/pAj2JEV.png" width="400px">
+<img src="https://imgse.com/i/pVyspIs" width="400px">

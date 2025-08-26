@@ -5,6 +5,7 @@
       {
         "name": "default",
         "signingConfig": "default",
+        "targetSdkVersion": "5.1.1(19)",
         "compatibleSdkVersion": "5.0.1(13)",
         "runtimeOS": "HarmonyOS",
         "buildOption": {
@@ -26,8 +27,8 @@
   },
   "modules": [
     {
-      "name": "app",
-      "srcPath": "./app",
+      "name": "App",
+      "srcPath": "./App",
       "targets": [
         {
           "name": "default",
